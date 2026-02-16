@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        # Esto permite que el Gateway use nombres en lugar de IPs
+        instance-id: ${spring.application.name}:${random.value}
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+    gateway:
+      discovery:
+        locator:
+          enabled: true # Esto auto-detecta servicios en Consul
+      routes:
+        - id: servicio-cocina
+          uri: lb://servicio-cocina # "lb" activa el balanceo de carga
+          predicates:
+            - Path=/cocina/** # Todo lo que vaya a /cocina lo manda al microservicio
