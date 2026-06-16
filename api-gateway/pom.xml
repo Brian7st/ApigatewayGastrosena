@@ -37,11 +37,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway-server-webmvc</artifactId>
+		</dependency>
+
+		<!-- Librería de seguridad compartida: JwtService (HMAC-SHA, jjwt) -->
+		<dependency>
+			<groupId>co.edu.sena</groupId>
+			<artifactId>ga-lib-security</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

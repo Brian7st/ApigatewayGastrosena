@@ -1,24 +1,71 @@
 server:
-  port: 8080
+  port: ${GATEWAY_PORT:8088}
 
 spring:
   application:
     name: api-gateway
   cloud:
-    consul:
-      host: localhost
-      port: 8500
-      discovery:
-        # Esto permite que el Gateway use nombres en lugar de IPs
-        instance-id: ${spring.application.name}:${random.value}
-        health-check-path: /actuator/health
-        health-check-interval: 10s
     gateway:
-      discovery:
-        locator:
-          enabled: true # Esto auto-detecta servicios en Consul
-      routes:
-        - id: servicio-cocina
-          uri: lb://servicio-cocina # "lb" activa el balanceo de carga
-          predicates:
-            - Path=/cocina/** # Todo lo que vaya a /cocina lo manda al microservicio
+      server:
+        webmvc:
+          routes:
+            # ── usuarios / auth / admin (8081 interno) ──────────────────────
+            - id: usuarios
+              uri: ${SVC_USUARIOS_URI:http://usuarios:8081}
+              predicates:
+                - Path=/api/auth/**,/api/usuarios/**,/api/admin/**,/api/comentarios/**,/api/configuracion/**,/api/fichas/**,/api/historial/**,/api/home,/api/notificaciones/**,/api/perfil/**,/api/roles/**,/api/imagenes/**
+
+            # ── inventario (8081) ───────────────────────────────────────────
+            - id: inventario
+              uri: ${SVC_INVENTARIO_URI:http://inventario:8081}
+              predicates:
+                - Path=/api/v1/**
+
+            # ── restaurante (8080) ──────────────────────────────────────────
+            # OJO: /api/recetas, /api/categorias y /api/ingredientes también las
+            # reclama cocina. Colisión de contratos sin resolver del equipo:
+            # acá quedan en restaurante. Disambiguar con prefijos (/api/cocina/...).
+            - id: restaurante
+              uri: ${SVC_RESTAURANTE_URI:http://restaurante:8080}
+              predicates:
+                - Path=/api/bar/**,/api/recetas/**,/api/mesas/**,/api/categorias/**,/api/pedidos/**,/api/ingredientes/**,/api/caja/**,/api/facturas/**
+
+            # ── cocina (8082) ───────────────────────────────────────────────
+            - id: cocina
+              uri: ${SVC_COCINA_URI:http://cocina:8082}
+              predicates:
+                - Path=/api/cocina/**,/api/actividades/**,/api/pasos/**
+
+            # ── barbarismo / bar (8086) ─────────────────────────────────────
+            - id: barbarismo
+              uri: ${SVC_BARBARISMO_URI:http://barbarismo:8086}
+              predicates:
+                - Path=/api/barybarismo/**
+
+            # ── reportes (8083) ─────────────────────────────────────────────
+            - id: reportes
+              uri: ${SVC_REPORTES_URI:http://reportes:8083}
+              predicates:
+                - Path=/api/reportes/**
+
+# ── Seguridad: secreto JWT compartido con usuarios (HMAC-SHA simétrico) ──────
+# NUNCA hardcodear en prod: inyectar SECURITY_SECRET por entorno.
+security:
+  # SIEMPRE inyectar por entorno (SECURITY_SECRET). El default es solo un
+  # placeholder de desarrollo; NUNCA usarlo en prod.
+  secret: ${SECURITY_SECRET:devLocalSecretChangeMe0000000000000000000000=}
+  expiration-ms: ${SECURITY_EXPIRATION_MS:3600000}
+  refresh-threshold-ms: ${SECURITY_REFRESH_THRESHOLD_MS:300000}
+  # Rutas públicas: NO requieren token (login, recuperación, health).
+  public-paths: /api/auth,/auth,/actuator,/api/home
+
+# CORS centralizado en el gateway (único punto de entrada).
+gateway:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
