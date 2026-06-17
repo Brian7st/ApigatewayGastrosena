@@ -13,7 +13,7 @@ spring:
             - id: usuarios
               uri: ${SVC_USUARIOS_URI:http://usuarios:8081}
               predicates:
-                - Path=/api/auth/**,/api/usuarios/**,/api/admin/**,/api/comentarios/**,/api/configuracion/**,/api/fichas/**,/api/historial/**,/api/home,/api/notificaciones/**,/api/perfil/**,/api/roles/**,/api/imagenes/**
+                - Path=/api/auth/**,/api/usuarios/**,/api/admin/**,/api/comentarios/**,/api/configuracion/**,/api/fichas/**,/api/historial/**,/api/home/**,/api/notificaciones/**,/api/perfil/**,/api/roles/**,/api/imagenes/**
 
             # ── inventario (8081) ───────────────────────────────────────────
             - id: inventario
