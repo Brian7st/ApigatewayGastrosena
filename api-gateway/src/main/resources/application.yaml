@@ -53,7 +53,7 @@ spring:
 security:
   # SIEMPRE inyectar por entorno (SECURITY_SECRET). El default es solo un
   # placeholder de desarrollo; NUNCA usarlo en prod.
-  secret: ${SECURITY_SECRET:devLocalSecretChangeMe0000000000000000000000=}
+  secret: ${SECURITY_SECRET:ZGV2LXBsYWNlaG9sZGVyLXNlY3JldC1vdmVycmlkZS13aXRoLVNFQ1VSSVRZX1NFQ1JFVC1pbi1wcm9k}
   expiration-ms: ${SECURITY_EXPIRATION_MS:3600000}
   refresh-threshold-ms: ${SECURITY_REFRESH_THRESHOLD_MS:300000}
   # Rutas públicas: NO requieren token (login, recuperación, health).
