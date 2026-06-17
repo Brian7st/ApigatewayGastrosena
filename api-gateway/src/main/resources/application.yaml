@@ -57,7 +57,7 @@ security:
   expiration-ms: ${SECURITY_EXPIRATION_MS:3600000}
   refresh-threshold-ms: ${SECURITY_REFRESH_THRESHOLD_MS:300000}
   # Rutas públicas: NO requieren token (login, recuperación, health).
-  public-paths: /api/auth,/auth,/actuator,/api/home
+  public-paths: /api/auth,/auth,/actuator,/api/home,/api/comentarios/aprobados
 
 # CORS centralizado en el gateway (único punto de entrada).
 gateway:
