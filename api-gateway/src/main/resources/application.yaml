@@ -22,19 +22,19 @@ spring:
                 - Path=/api/v1/**
 
             # ── restaurante (8080) ──────────────────────────────────────────
-            # OJO: /api/recetas, /api/categorias y /api/ingredientes también las
-            # reclama cocina. Colisión de contratos sin resolver del equipo:
-            # acá quedan en restaurante. Disambiguar con prefijos (/api/cocina/...).
             - id: restaurante
               uri: ${SVC_RESTAURANTE_URI:http://restaurante:8080}
               predicates:
-                - Path=/api/bar/**,/api/recetas/**,/api/mesas/**,/api/categorias/**,/api/pedidos/**,/api/ingredientes/**,/api/caja/**,/api/facturas/**
+                - Path=/api/bar/**,/api/mesas/**,/api/pedidos/**,/api/caja/**,/api/facturas/**
 
             # ── cocina (8082) ───────────────────────────────────────────────
+            # /api/recetas, /api/categorias e /api/ingredientes son de cocina
+            # (RecetaController, CategoriaRecetaController, IngredienteController);
+            # restaurante no las sirve.
             - id: cocina
               uri: ${SVC_COCINA_URI:http://cocina:8082}
               predicates:
-                - Path=/api/cocina/**,/api/actividades/**,/api/pasos/**
+                - Path=/api/cocina/**,/api/actividades/**,/api/pasos/**,/api/recetas/**,/api/categorias/**,/api/ingredientes/**
 
             # ── barbarismo / bar (8086) ─────────────────────────────────────
             - id: barbarismo
