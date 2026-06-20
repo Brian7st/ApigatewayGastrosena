@@ -57,7 +57,12 @@ security:
   expiration-ms: ${SECURITY_EXPIRATION_MS:3600000}
   refresh-threshold-ms: ${SECURITY_REFRESH_THRESHOLD_MS:300000}
   # Rutas públicas: NO requieren token (login, recuperación, health).
-  public-paths: /api/auth,/auth,/actuator,/api/home,/api/comentarios/aprobados
+  # Cartas PÚBLICAS (solo lectura) que consume la landing y el front de restaurante
+  # sin login:
+  #   /api/recetas/menu              → carta de COCINA
+  #   /api/barybarismo/recetas/menu  → carta de BAR/BARBARISMO
+  # El resto de cada /**/recetas/** sigue protegido (crear/editar/borrar validan rol).
+  public-paths: /api/auth,/auth,/actuator,/api/home,/api/comentarios/aprobados,/api/recetas/menu,/api/barybarismo/recetas/menu
 
 # CORS centralizado en el gateway (único punto de entrada).
 gateway:
