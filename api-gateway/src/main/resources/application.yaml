@@ -22,10 +22,13 @@ spring:
                 - Path=/api/v1/**
 
             # ── restaurante (8080) ──────────────────────────────────────────
+            # Controllers reales: PedidoController(/api/pedidos),
+            # CajaController(/api/caja), FacturaController(/api/facturas),
+            # MesaController(/api/mesas), ReporteController(/api/restaurante/reportes).
             - id: restaurante
               uri: ${SVC_RESTAURANTE_URI:http://restaurante:8080}
               predicates:
-                - Path=/api/bar/**,/api/mesas/**,/api/pedidos/**,/api/caja/**,/api/facturas/**
+                - Path=/api/mesas/**,/api/pedidos/**,/api/caja/**,/api/facturas/**,/api/restaurante/reportes/**
 
             # ── cocina (8082) ───────────────────────────────────────────────
             # /api/recetas, /api/categorias e /api/ingredientes son de cocina
