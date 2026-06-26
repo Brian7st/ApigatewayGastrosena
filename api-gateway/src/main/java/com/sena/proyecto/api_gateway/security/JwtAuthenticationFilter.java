@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String H_USER_ID = "X-User-Id";
     private static final String H_USER_EMAIL = "X-User-Email";
     private static final String H_USER_ROL = "X-User-Rol";
+    private static final String H_USER_NOMBRE = "X-User-Nombre";
 
     private final JwtService jwtService;
     private final List<String> publicPaths;
@@ -82,6 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             identity.put(H_USER_ID, jwtService.extractUserId(token).toString());
             identity.put(H_USER_EMAIL, jwtService.extractUserName(token));
             identity.put(H_USER_ROL, jwtService.extractNombreRol(token));
+            identity.put(H_USER_NOMBRE, jwtService.extractNombreCompleto(token));
         } catch (RuntimeException e) {
             unauthorized(response, "Token con claims inválidos");
             return;
@@ -108,7 +110,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /** Wrapper que reemplaza los X-User-* por los valores derivados del token. */
     private HttpServletRequest withIdentityHeaders(HttpServletRequest request, Map<String, String> identity) {
         Map<String, String> override = new HashMap<>();
-        for (String h : List.of(H_USER_ID, H_USER_EMAIL, H_USER_ROL)) {
+        for (String h : List.of(H_USER_ID, H_USER_EMAIL, H_USER_ROL, H_USER_NOMBRE)) {
             override.put(h.toLowerCase(Locale.ROOT), identity.get(h));
         }
         return new HttpServletRequestWrapper(request) {
