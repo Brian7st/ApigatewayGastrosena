@@ -61,8 +61,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         if (isPublic(path)) {
-            // Aun en rutas públicas hay que limpiar headers de identidad spoofeados.
-            chain.doFilter(stripIdentityHeaders(request), response);
+            // Rutas públicas: inyectar identidad de invitado (los micros requieren
+            // X-User-* para aceptar la request, pero sin privilegios).
+            chain.doFilter(guestIdentityHeaders(request), response);
             return;
         }
 
@@ -102,9 +103,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.getWriter().write("{\"error\":\"" + message + "\"}");
     }
 
-    /** Wrapper que quita los X-User-* entrantes (anti-spoofing). */
-    private HttpServletRequest stripIdentityHeaders(HttpServletRequest request) {
-        return withIdentityHeaders(request, Collections.emptyMap());
+    /** Wrapper que inyecta identidad de invitado (rutas públicas). */
+    private HttpServletRequest guestIdentityHeaders(HttpServletRequest request) {
+        Map<String, String> guest = new HashMap<>();
+        guest.put(H_USER_ID, "");
+        guest.put(H_USER_EMAIL, "");
+        guest.put(H_USER_ROL, "PUBLIC");
+        guest.put(H_USER_NOMBRE, "Invitado");
+        return withIdentityHeaders(request, guest);
     }
 
     /** Wrapper que reemplaza los X-User-* por los valores derivados del token. */
